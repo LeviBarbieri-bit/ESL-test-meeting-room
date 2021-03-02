@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-content>
+    <v-main>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="8">
@@ -12,7 +12,7 @@
                     <v-card-text class="mt-12">
                       <h1 class="text-center display-2 light-blue--text text--accent-3">Sign in</h1>
                       
-                      <v-form>
+                      <v-form class="login" @submit.prevent="login">
                         <v-text-field 
                         label="Email" 
                         name="Email" 
@@ -62,7 +62,7 @@
                   <v-col cols="12" md="8" >
                     <v-card-text class="mt-12">
                       <h1 class="text-center display-2 light-blue--text text--accent-3">Create Account</h1>
-                      <v-form>
+                      <v-form >
                          <v-text-field 
                         label="Name" 
                         name="Name" 
@@ -96,32 +96,31 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 <script>
+
   export default {
-    name: 'login',
-      data () {
-        return {
-          user: {
-            email: null,
-            password: null
-          }
-        }
-      },
-      methods: {
-        handleSubmit: function () {
-          console.log(this.user)
-        }
+
+    data(){
+      return {
+        step: 1,
+        email : "",
+        password : ""
+      };
     },
-    data: () => ({
-      step: 1
-    }),
+    methods: {
+      login: function () {
+        let email = this.email
+        let password = this.password
+        this.$store.dispatch('login', { email, password })
+       .then(() => this.$router.push('/'))
+       .catch(err => console.log(err))
+      }
+    },
     props: {
       source: String
     }
-
-    
   }
 </script>
