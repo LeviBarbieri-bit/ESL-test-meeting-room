@@ -107,6 +107,7 @@
   </v-app>
 </template>
 <script>
+  import { mapActions } from 'vuex'
 
   export default {
 
@@ -118,8 +119,9 @@
       }
     }),
     methods: {
+      ...mapActions('auth', ['ActionDoLogin']),
       login () {
-        console.log(this.form)
+        this.ActionDoLogin(this.form)
       }
     },
     props: {
