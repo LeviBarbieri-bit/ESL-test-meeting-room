@@ -5,7 +5,7 @@ export default {
         state.user = payload
     },
 
-    [types.SET_USER] (state, payload) {
+    [types.SET_TOKEN] (state, payload) {
         state.token = payload
     }
 }

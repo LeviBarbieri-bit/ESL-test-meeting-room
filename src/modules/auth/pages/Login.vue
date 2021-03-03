@@ -118,10 +118,18 @@
         password: ''
       }
     }),
+  
     methods: {
       ...mapActions('auth', ['ActionDoLogin']),
-      login () {
-        this.ActionDoLogin(this.form)
+      async login () {
+
+        try {
+          await this.ActionDoLogin(this.form)
+          
+        } catch (err) {
+         console.log(err)
+        }
+  
       }
     },
     props: {
