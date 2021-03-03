@@ -114,8 +114,8 @@
     data: () => ({
       step:1,
       form: {
-        email:'',
-        password: ''
+        email:'levibarbieri@gmail.com',
+        password: 'q1w2e3r4'
       }
     }),
   
@@ -125,11 +125,11 @@
 
         try {
           await this.ActionDoLogin(this.form)
-          
+          this.$router.push({ name: 'shedule' })
         } catch (err) {
-         console.log(err)
+          alert('Email or Password invalid')
         }
-  
+       
       }
     },
     props: {
