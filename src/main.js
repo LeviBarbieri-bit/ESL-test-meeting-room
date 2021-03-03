@@ -8,7 +8,7 @@ import Vuex from "vuex";
 Vue.config.productionTip = false
 
 Vue.use(Vuex);
-new Vue({
+window._Vue = new Vue({
   router,
   vuetify,
   store,

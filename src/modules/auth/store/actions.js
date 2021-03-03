@@ -24,16 +24,17 @@ export const ActionCheckToken = ({ dispatch, state }) => {
     return dispatch('ActionLoadSession')
 }
 
-export const ActionLoadSession = ({ dispatch }) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const { data: { user } } = await services.auth.loadSession()
-            dispatch('ActionSetUser', user)
+export const ActionLoadSession = ({ dispatch }) => { 
+    return new Promise((resolve, reject) => {
+       
+        services.auth.loadSession().then(res => {
+            dispatch('ActionSetUser', res.data.user)
             resolve()
-        } catch (err) {
+        }).catch((err) => {
             dispatch('ActionSignOut')
             reject(err)
-        }
+        })
+       
     })
 }
 
