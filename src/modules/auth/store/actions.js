@@ -4,27 +4,27 @@ import * as types from './mutation-type'
 
 export const ActionDoLogin = ({ dispatch }, payload) => {
     return services.auth.login(payload).then(res => {
-      dispatch('ActionSetUser', res.data.user)
-      dispatch('ActionSetToken', res.data.token)
+        dispatch('ActionSetUser', res.data.user)
+        dispatch('ActionSetToken', res.data.token)
     })
 }
 
 export const ActionCheckToken = ({ dispatch, state }) => {
-    if(state.token) {
+    if (state.token) {
         return Promise.resolve(state.token)
     }
 
     const token = storage.getLocalToken()
 
-    if(!token) {
-        return Promise.reject(new Error('invalid token'))
+    if (!token) {
+        return Promise.reject(new Error('Token Inválido'))
     }
 
-    dispatch('ActionSetToken, token')
+    dispatch('ActionSetToken', token)
     return dispatch('ActionLoadSession')
 }
 
-/*export const ActionLoadSession = ({ dispatch }) => {
+export const ActionLoadSession = ({ dispatch }) => {
     return new Promise(async (resolve, reject) => {
         try {
             const { data: { user } } = await services.auth.loadSession()
@@ -35,7 +35,7 @@ export const ActionCheckToken = ({ dispatch, state }) => {
             reject(err)
         }
     })
-}*/
+}
 
 export const ActionSetUser = ({ commit }, payload) => {
     commit(types.SET_USER, payload)
@@ -52,4 +52,4 @@ export const ActionSignOut = ({ dispatch }) => {
     storage.deleteLocalToken()
     dispatch('ActionSetUser', {})
     dispatch('ActionSetToken', '')
-  }
+}
