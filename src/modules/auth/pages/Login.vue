@@ -12,27 +12,30 @@
                     <v-card-text class="mt-12">
                       <h1 class="text-center display-2 light-blue--text text--accent-3">Sign in</h1>
                       
-                      <v-form class="login" @submit.prevent="login">
+                      <v-form class="login" @submit.prevent="login()">
                         <v-text-field 
+                        required
                         label="Email" 
-                        name="Email" 
+                        name="email" 
                         type="text" 
                         prepend-icon="email"
-                        color="light-blue darken-1" />
+                        color="light-blue darken-1"
+                        v-model="form.email" />
 
                         <v-text-field 
+                        required
                         id="password"
                         label="Password" 
                         name="Password" 
                         prepend-icon="lock"
                         type="password" 
-                        color="light-blue darken-1" />
+                        color="light-blue darken-1"
+                        v-model="form.password" />
+                        <div class="tex-center mt-3">
+                          <v-btn type="submit" rounded color="light-blue darken-1" dark>SIGN IN</v-btn>
+                        </div>
                       </v-form>
-                  
                     </v-card-text>
-                    <div class="tex-center mt-3">
-                      <v-btn rounded color="light-blue darken-1" dark>SIGN IN</v-btn>
-                    </div>
                   </v-col>
                   <v-col cols="12" md="4" class="light-blue darken-1">
                     <v-card-text class="white--text mt-12">
@@ -62,8 +65,9 @@
                   <v-col cols="12" md="8" >
                     <v-card-text class="mt-12">
                       <h1 class="text-center display-2 light-blue--text text--accent-3">Create Account</h1>
-                      <v-form >
-                         <v-text-field 
+                      <v-form @submit.prevent="register()">
+                        <v-text-field 
+                        required
                         label="Name" 
                         name="Name" 
                         type="text" 
@@ -71,6 +75,7 @@
                         color="light-blue darken-1" />
 
                         <v-text-field 
+                        required
                         label="Email" 
                         name="Email" 
                         type="text" 
@@ -78,12 +83,14 @@
                         color="light-blue darken-1" />
 
                         <v-text-field 
+                        required
                         id="password"
                         label="Password" 
                         name="Password" 
                         prepend-icon="lock"
                         type="password" 
-                        color="light-blue darken-1" />
+                        color="light-blue darken-1"
+                         />
                       </v-form>
                     </v-card-text>
                     <div class="text-center mt-n5">
@@ -103,20 +110,16 @@
 
   export default {
 
-    data(){
-      return {
-        step: 1,
-        email : "",
-        password : ""
-      };
-    },
+    data: () => ({
+      step:1,
+      form: {
+        email:'',
+        password: ''
+      }
+    }),
     methods: {
-      login: function () {
-        let email = this.email
-        let password = this.password
-        this.$store.dispatch('login', { email, password })
-       .then(() => this.$router.push('/'))
-       .catch(err => console.log(err))
+      login () {
+        console.log(this.form)
       }
     },
     props: {
