@@ -1,4 +1,4 @@
-# my-app
+# Meeting Room
 
 ## Project setup
 ```
