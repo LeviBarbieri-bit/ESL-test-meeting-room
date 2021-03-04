@@ -2,7 +2,7 @@
 <template>
     <div id="home">
         <div class="user-info">
-            <h2>Olá, {{token}} </h2>
+            <h2>Olá, {{user.name}} </h2>
         </div>
     </div>
 </template>
@@ -13,7 +13,7 @@ import { mapState } from 'vuex'
 export default {
     name: 'shedule',
     computed: {
-        ...mapState('auth', ['token']),
+        ...mapState('auth', ['user']),
     }
 }
 </script>

@@ -28,7 +28,7 @@ export const ActionLoadSession = ({ dispatch }) => {
     return new Promise((resolve, reject) => {
        
         services.auth.loadSession().then(res => {
-            dispatch('ActionSetUser', res.data.user)
+            dispatch('ActionSetUser', res.data)
             resolve()
         }).catch((err) => {
             dispatch('ActionSignOut')
