@@ -1,0 +1,1 @@
+export const SET_SHEDULES = 'SHEDULES/SET_SHEDULES'

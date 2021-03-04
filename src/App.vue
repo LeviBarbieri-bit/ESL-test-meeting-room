@@ -6,7 +6,7 @@
     <v-footer dark padless>
       <v-card class="flex text-center" flat tile>
         <v-card-text class="py-2 white--text text-center">
-          {{ new Date().getFullYear() }} — <strong>Levi Barbieri</strong>
+          {{ new Date().getFullYear() }} — <strong>Reserva de Sala</strong>
         </v-card-text>
       </v-card>
     </v-footer>
