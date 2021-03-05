@@ -1,9 +1,9 @@
 import {store as auth} from '@/modules/auth'
 import {store as user} from '@/views/user'
-import {store as shedules} from '@/views/shedules'
+import {store as shedule} from '@/views/shedule'
 
 export default {
     auth,
     user,
-    shedules
+    shedule
 }

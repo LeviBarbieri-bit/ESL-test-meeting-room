@@ -4,6 +4,7 @@ export default req => {
   return ({ status }) => {
     if (status === 401) {
       store.dispatch('auth/ActionSignOut')
+      console.log(req)
       window._Vue.$router.push({ name: 'login' })
     }
   }
