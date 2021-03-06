@@ -77,7 +77,7 @@
 
         try {
           await this.ActionDoLogin(this.form)
-          this.$router.push({ name: 'shedule' })
+          this.$router.push({ name: 'schedules' })
         } catch (err) {
           alert('Email or Password invalid')
         }

@@ -41,6 +41,7 @@
         </v-menu>
       </v-toolbar>
     </v-card>
+   
     <v-container class="fill-height" fluid>
       <v-row align="center" justify="center">
         <v-col cols="10" sm="10" md="10">
@@ -101,7 +102,7 @@
               @click:event="showEvent"
               @click:more="viewDay"
               @click:date="viewDay"
-              @change="updateRange"
+              @change="updateCalendar()"
             ></v-calendar>
             <v-menu
               v-model="selectedOpen"
@@ -149,7 +150,7 @@
                 <v-toolbar color="primary" dark>Opening from the top</v-toolbar>
                 <v-container class="fill-height" fluid>
                   <v-col cols="12">
-                    <v-form @submit.prevent="addShedule()">
+                    <v-form @submit.prevent="addSchedules()">
                       <v-menu
                         v-model="menu2"
                         :close-on-content-click="false"
@@ -168,6 +169,7 @@
                             readonly
                             v-bind="attrs"
                             v-on="on"
+                            name="date"
                           ></v-text-field>
                         </template>
                         <v-date-picker
@@ -190,6 +192,7 @@
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="time"
+                            name="time"
                             label="Picker in menu"
                             prepend-icon="mdi-clock-time-four-outline"
                             readonly
@@ -205,6 +208,7 @@
                         ></v-time-picker>
                       </v-menu>
                       <v-textarea
+                         name="description"
                         clearable
                         clear-icon="mdi-close-circle"
                         label="Text"
@@ -235,12 +239,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
-  name: "shedule",
+  name: "schedules",
   computed: {
     ...mapState("auth", ["user"]),
+    ...mapState("schedules", ["listSchedules"]),
     computedDateFormatted() {
       return this.formatDate(this.date);
     },
@@ -275,20 +280,20 @@ export default {
     details: [],
     colors: ["green", "red"],
     names: ["Disponivel", "Reservado"],
-
+    
     form: {
-      users_id: 1,
-      time: "12:00",
-      date: "2021-05-20",
-      description: "loren ipsun teste description",
+      users_id: 3,
     },
   }),
   mounted() {
-    this.ActionShowshedule();
+    
     this.$refs.calendar.checkChange();
   },
 
   methods: {
+    ...mapActions("schedules", ["ActionShowSchedules"]),
+    ...mapActions("schedules", ["ActionAddSchedules"]),
+    
     formatDate(date) {
       if (!date) return null;
 
@@ -302,22 +307,21 @@ export default {
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
     
-    ...mapState("shedule", ["ActionShowshedule"]),
-    ...mapState("shedule", ["ActionAddShedule"]),
-    async addShedule() {
-      //console.log(this.form)
-     await this.ActionAddShedule(this.form);
+    
+    
+    async addSchedules() {
 
-      /*try {
+      try {
+        console.log(this.form)
+        this.ActionAddSchedules(this.form);
 
-
-        
         alert("Agendamento cadastrado com sucesso");
       } catch (err) {
         alert("erro ao cadastrar");
         console.log(err);
-      }*/
+      }
     },
+
 
     viewDay({ date }) {
       this.focus = date;
@@ -353,15 +357,12 @@ export default {
 
       nativeEvent.stopPropagation();
     },
-    updateRange({ start, end }) {
-      const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-
-      for (let i = 0; i < eventCount; i++) {
+    
+    
+    updateCalendar() {
+  
+      console.log(this.ActionShowSchedules())
+      /*for (let i = 0; i < eventCount; i++) {
         const allDay = this.rnd(0, 3) === 0;
         const firstTimestamp = this.rnd(min.getTime(), max.getTime());
         const first = new Date(firstTimestamp - (firstTimestamp % 900000));
@@ -375,8 +376,10 @@ export default {
           details: "teste",
           color: this.colors[this.rnd(0, this.colors.length - 1)],
         });
-      }
+      }*/
 
+      const events = [];
+      
       this.events = events;
     },
     rnd(a, b) {

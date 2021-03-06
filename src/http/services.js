@@ -1,10 +1,9 @@
 import { services as auth} from '@/modules/auth'
 import { services as user } from '@/views/user'
-import { services as shedule } from '@/views/shedule'
-
+import { services as schedules } from '@/views/schedules'
 
 export default {
     auth,
     user,
-    shedule
+    schedules,
 }
