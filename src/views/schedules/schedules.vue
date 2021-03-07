@@ -41,7 +41,6 @@
         </v-menu>
       </v-toolbar>
     </v-card>
-   
     <v-container class="fill-height" fluid>
       <v-row align="center" justify="center">
         <v-col cols="10" sm="10" md="10">
@@ -102,7 +101,7 @@
               @click:event="showEvent"
               @click:more="viewDay"
               @click:date="viewDay"
-              @change="updateCalendar()"
+              @change="updateCalendar"
             ></v-calendar>
             <v-menu
               v-model="selectedOpen"
@@ -112,7 +111,7 @@
             >
               <v-card color="grey lighten-4" min-width="350px" flat>
                 <v-toolbar :color="selectedEvent.color" dark>
-                  <v-btn icon>
+                  <v-btn  @click="editReservation(selectedEvent)">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                   <v-toolbar-title
@@ -208,7 +207,7 @@
                         ></v-time-picker>
                       </v-menu>
                       <v-textarea
-                         name="description"
+                        name="description"
                         clearable
                         clear-icon="mdi-close-circle"
                         label="Text"
@@ -257,7 +256,6 @@ export default {
   },
 
   data: (vm) => ({
-
     time: null,
     menu3: false,
     modal2: false,
@@ -280,20 +278,54 @@ export default {
     details: [],
     colors: ["green", "red"],
     names: ["Disponivel", "Reservado"],
-    
+
     form: {
       users_id: 3,
     },
   }),
   mounted() {
-    
     this.$refs.calendar.checkChange();
+    this.ActionShowSchedules();
   },
 
   methods: {
     ...mapActions("schedules", ["ActionShowSchedules"]),
     ...mapActions("schedules", ["ActionAddSchedules"]),
-    
+
+    editReservation(dataReservation) {
+      
+      //var validUser = this.validUser(dataReservation.user_id)
+      var valideDate = this.valideDate(dataReservation.start)
+
+      /*if(validUser === true && valideDate === true) {
+        
+      }*/
+    },
+
+    validUser(user_id)
+    {
+      if(user_id != this.user.id)
+      {
+        alert('Você não tem permissão para alterar esse agendamento !!!')
+      } else {
+        return true;
+      }
+    },
+
+    valideDate(date)
+    {
+      const dateNow = new Date();
+      const dateSchedule = new Date(date);
+
+      if(dateNow > dateSchedule)
+      {
+        alert('Esta data já está expirada, favor agendar um novo período !!!')
+      } else {
+        return true;
+      }
+    },
+
+
     formatDate(date) {
       if (!date) return null;
 
@@ -306,13 +338,9 @@ export default {
       const [month, day, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
-    
-    
-    
-    async addSchedules() {
 
+    async addSchedules() {
       try {
-        console.log(this.form)
         this.ActionAddSchedules(this.form);
 
         alert("Agendamento cadastrado com sucesso");
@@ -321,7 +349,6 @@ export default {
         console.log(err);
       }
     },
-
 
     viewDay({ date }) {
       this.focus = date;
@@ -357,29 +384,21 @@ export default {
 
       nativeEvent.stopPropagation();
     },
-    
-    
+
     updateCalendar() {
-  
-      console.log(this.ActionShowSchedules())
-      /*for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          details: "teste",
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-        });
-      }*/
-
-      const events = [];
       
+      const events = [];
+      this.listSchedules.forEach((doc) => {
+        events.push({
+          name: "Reservado",
+          start: doc.date + " " + doc.time,
+          details: doc.description,
+          timed: doc.time,
+          color: "success",
+          user_id: doc.users_id
+        });
+      });
+
       this.events = events;
     },
     rnd(a, b) {
