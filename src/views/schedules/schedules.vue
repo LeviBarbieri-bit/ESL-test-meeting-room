@@ -26,13 +26,6 @@
                   {{ user.email }}
                 </p>
 
-                <!--<v-btn
-                            depressed
-                            rounded
-                            text
-                        >
-                            Edit Account
-                        </v-btn>-->
                 <v-divider class="my-3"></v-divider>
                 <v-btn depressed rounded text> Sair </v-btn>
               </div>
@@ -160,6 +153,7 @@
                   <v-row>
                     <v-textarea
                       name="description"
+                      v-model="formdialog.description"
                       clearable
                       clear-icon="mdi-close-circle"
                       label="Descrição da Reserva"
@@ -205,7 +199,7 @@
                         <v-text-field
                           v-model="dateFormatted"
                           label="Data"
-                          hint="DD/MM/YYYY Formato"
+                          hint="Datas Anteriores a hoje não serão aceitas"
                           persistent-hint
                           prepend-icon="mdi-calendar"
                           v-bind="attrs"
@@ -322,7 +316,7 @@ export default {
     menu2: false,
     focus: "",
     type: "month",
-    weekday: [0, 1, 2, 3, 4, 5],
+    weekday: [ 1, 2, 3, 4, 5],
     typeToLabel: {
       month: "Mês",
       week: "Semana",
@@ -356,8 +350,13 @@ export default {
     this.$refs.calendar.checkChange();
     this.ActionShowSchedules();
     this.updateCalendar();
+
   },
 
+  created() {
+    this.ActionShowSchedules();
+    this.updateCalendar();
+  },
   methods: {
     ...mapActions("schedules", [
       "ActionShowSchedules",
@@ -369,11 +368,12 @@ export default {
     async ScheduleFormEdit() {
       
       try {
-        
+        console.log(this.formdialog)
         await this.ActionEditSchedule(this.formdialog);
         this.ActionShowSchedules();
-        this.updateCalendar();
         alert("Agendamento Alterado com Sucesso!");
+        this.updateCalendar();
+        this.dialogform = false;
       } catch (err) {
         
         alert("Erro ao alterar Agendamento");
@@ -383,13 +383,15 @@ export default {
     async deleteReservation(dataReservation) {
       try {
         var validUser = this.validUser(dataReservation.user_id);
+        var confirmSchedule = confirm("Tem certeza que quer excluir o agendamento ?")
 
-        if (validUser === true) {
+        if (validUser === true && confirmSchedule === true) {
           await this.ActionDeleteSchedule(dataReservation.id_schedules);
 
           this.ActionShowSchedules();
-          this.updateCalendar();
+        
           alert("Deletado com Sucesso!");
+          this.updateCalendar();
         }
       } catch (error) {
         alert("Erro ao deletar");
@@ -427,7 +429,7 @@ export default {
       const dateSchedule = new Date(date);
 
       if (dateNow > dateSchedule) {
-        alert("Esta data já está expirada, favor agendar um novo período !!!");
+        return false;
       } else {
         return true;
       }
@@ -457,12 +459,15 @@ export default {
   
       try {
         this.ActionAddSchedules(this.formaddschedules);
+         this.ActionShowSchedules();
         
-
-        alert("Agendamento cadastrado com sucesso");
-      } catch (err) {
+        alert("Cadastrado com Sucesso");
+        this.updateCalendar();
+      
+        
+      } catch (error) {
   
-        alert(err.date ? err.date  : 'Erro ao Cadastrar')
+        alert(error.date ? error.date  : 'Erro ao Cadastrar')
       }
     },
 
@@ -502,6 +507,7 @@ export default {
     },
 
      async updateCalendar() {
+  
       const events = [];
     
       await this.listSchedules.forEach((doc) => {
@@ -518,10 +524,9 @@ export default {
       });
 
       this.events = events;
+  
     },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
-    },
+    
   },
 };
 </script>

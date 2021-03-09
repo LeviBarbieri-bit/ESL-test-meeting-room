@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
 export default {
   name: "App",
   
@@ -24,14 +22,6 @@ export default {
   data: () => ({
     //
   }),
-  mounted() {
-    this.ActionShowSchedules();
-  },
-  
-  methods: {
-    ...mapActions("schedules", [
-      "ActionShowSchedules"]),
-
-  },
+   
 };
 </script>
