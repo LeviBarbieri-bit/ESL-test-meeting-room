@@ -41,11 +41,22 @@
         </v-menu>
       </v-toolbar>
     </v-card>
+
     <v-container class="fill-height" fluid>
       <v-row align="center" justify="center">
         <v-col cols="10" sm="10" md="10">
           <v-sheet height="64">
             <v-toolbar flat>
+              <div class="my-2">
+                <v-btn
+                  class="addEvent"
+                  @click="modalAddSchedules = true"
+                  color="warning"
+                  dark
+                >
+                  Reservar Sala
+                </v-btn>
+              </div>
               <v-btn
                 outlined
                 class="mr-4"
@@ -95,6 +106,7 @@
               ref="calendar"
               v-model="focus"
               color="primary"
+              :weekdays="weekday"
               :events="events"
               :event-color="getEventColor"
               :type="type"
@@ -111,7 +123,7 @@
             >
               <v-card color="grey lighten-4" min-width="350px" flat>
                 <v-toolbar :color="selectedEvent.color" dark>
-                  <v-btn  @click="editReservation(selectedEvent)">
+                  <v-btn icon @click="editReservation(selectedEvent)">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                   <v-toolbar-title
@@ -119,8 +131,8 @@
                   ></v-toolbar-title>
                   <v-spacer></v-spacer>
 
-                  <v-btn icon>
-                    <v-icon>mdi-dots-vertical</v-icon>
+                  <v-btn icon @click="deleteReservation(selectedEvent)">
+                    <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </v-toolbar>
                 <v-card-text>
@@ -136,106 +148,151 @@
           </v-sheet>
         </v-col>
       </v-row>
-      <v-row justify="space-around">
-        <v-col cols="auto">
-          <v-dialog transition="dialog-top-transition" max-width="600">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn color="primary" v-bind="attrs" v-on="on"
-                >From the top</v-btn
-              >
-            </template>
-            <template v-slot:default="dialog">
-              <v-card>
-                <v-toolbar color="primary" dark>Opening from the top</v-toolbar>
-                <v-container class="fill-height" fluid>
-                  <v-col cols="12">
-                    <v-form @submit.prevent="addSchedules()">
-                      <v-menu
-                        v-model="menu2"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="computedDateFormatted"
-                            label="Date (read only text field)"
-                            hint="MM/DD/YYYY format"
-                            persistent-hint
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                            name="date"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="date"
-                          no-title
-                          @input="menu2 = false"
-                        ></v-date-picker>
-                      </v-menu>
-                      <v-menu
-                        ref="menu"
-                        v-model="menu3"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        :return-value.sync="time"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="time"
-                            name="time"
-                            label="Picker in menu"
-                            prepend-icon="mdi-clock-time-four-outline"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-time-picker
-                          v-if="menu3"
-                          v-model="time"
-                          full-width
-                          @click:minute="$refs.menu.save(time)"
-                        ></v-time-picker>
-                      </v-menu>
-                      <v-textarea
-                        name="description"
-                        clearable
-                        clear-icon="mdi-close-circle"
-                        label="Text"
-                        value="This is clearable text."
-                      ></v-textarea>
-                      <div class="text-center mt-n1">
-                        <v-btn
-                          type="subimit"
-                          rounded
-                          color="light-blue darken-1"
-                          dark
-                          >Cadastrar Agendamento</v-btn
-                        >
-                      </div>
-                    </v-form>
-                  </v-col>
+      <v-row justify="center">
+        <v-dialog v-model="dialogform" persistent max-width="600px">
+          <v-card>
+            <v-form @submit.prevent="ScheduleFormEdit()">
+              <v-card-title>
+                <span class="headline">{{ formdialog.title }}</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-textarea
+                      name="description"
+                      clearable
+                      clear-icon="mdi-close-circle"
+                      label="Descrição da Reserva"
+                      :value="formdialog.description"
+                    ></v-textarea>
+                  </v-row>
                 </v-container>
-                <v-card-actions class="justify-end">
-                  <v-btn text @click="dialog.value = false">Fechar</v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
-          </v-dialog>
-        </v-col>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="dialogform = false">
+                  Fechar
+                </v-btn>
+                <v-btn color="blue darken-1" text type="subimit">
+                  {{ formdialog.title }}
+                </v-btn>
+              </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-dialog>
+      </v-row>
+      <v-row justify="center">
+        <v-dialog v-model="modalAddSchedules" persistent max-width="600px">
+          <v-card>
+            <v-card-title>
+              <span class="headline">Adicionar Reserva</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" lg="4">
+                    
+                    <v-menu
+                      ref="menu1"
+                      v-model="menu1"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="dateFormatted"
+                          label="Data"
+                          hint="DD/MM/YYYY Formato"
+                          persistent-hint
+                          prepend-icon="mdi-calendar"
+                          v-bind="attrs"
+                          @blur="date = parseDate(dateFormatted)"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="date"
+                        no-title
+                        @input="menu1 = false"
+                      ></v-date-picker>
+                    </v-menu>
+
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" sm="4">
+                    <v-menu
+                      ref="menu"
+                      v-model="menu2"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      :return-value.sync="time"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="formaddschedules.time"
+                          label="Horário"
+                          prepend-icon="mdi-clock-time-four-outline"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-time-picker
+                        v-if="menu2"
+                        v-model="formaddschedules.time"
+                        full-width
+                        @click:minute="$refs.menu.save(formaddschedules.time)"
+                      ></v-time-picker>
+                      
+                    </v-menu>
+                    
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-textarea
+                      name="description"
+                      clearable
+                      clear-icon="mdi-close-circle"
+                      label="Descrição da Reserva"
+                      v-model="formaddschedules.description"
+                    ></v-textarea>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="modalAddSchedules = false"
+              >
+                Fechar
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="addSchedules()"
+              >
+                Salvar
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-row>
     </v-container>
   </div>
 </template>
+
 
 <script>
 import { mapState, mapActions } from "vuex";
@@ -264,7 +321,8 @@ export default {
     menu1: false,
     menu2: false,
     focus: "",
-    type: "week",
+    type: "month",
+    weekday: [0, 1, 2, 3, 4, 5],
     typeToLabel: {
       month: "Mês",
       week: "Semana",
@@ -278,75 +336,133 @@ export default {
     details: [],
     colors: ["green", "red"],
     names: ["Disponivel", "Reservado"],
-
-    form: {
-      users_id: 3,
+    dialogform: false,
+    modalAddSchedules: false,
+    formdialog: {
+      title: "Reserva",
+      description: "",
+      id: "",
     },
+    formaddschedules: {
+      time: "",
+      date: "",
+      description: "",
+      user_id: "",
+      
+
+    }
   }),
   mounted() {
     this.$refs.calendar.checkChange();
     this.ActionShowSchedules();
+    this.updateCalendar();
   },
 
   methods: {
-    ...mapActions("schedules", ["ActionShowSchedules"]),
-    ...mapActions("schedules", ["ActionAddSchedules"]),
+    ...mapActions("schedules", [
+      "ActionShowSchedules",
+      "ActionAddSchedules",
+      "ActionEditSchedule",
+      "ActionDeleteSchedule",
+    ]),
+
+    async ScheduleFormEdit() {
+      
+      try {
+        
+        await this.ActionEditSchedule(this.formdialog);
+        this.ActionShowSchedules();
+        this.updateCalendar();
+        alert("Agendamento Alterado com Sucesso!");
+      } catch (err) {
+        
+        alert("Erro ao alterar Agendamento");
+      }
+    },
+
+    async deleteReservation(dataReservation) {
+      try {
+        var validUser = this.validUser(dataReservation.user_id);
+
+        if (validUser === true) {
+          await this.ActionDeleteSchedule(dataReservation.id_schedules);
+
+          this.ActionShowSchedules();
+          this.updateCalendar();
+          alert("Deletado com Sucesso!");
+        }
+      } catch (error) {
+        alert("Erro ao deletar");
+      }
+    },
 
     editReservation(dataReservation) {
       
-      //var validUser = this.validUser(dataReservation.user_id)
-      var valideDate = this.valideDate(dataReservation.start)
-
-      /*if(validUser === true && valideDate === true) {
+      try {
+        var validUser = this.validUser(dataReservation.user_id);
+        var valideDate = this.valideDate(dataReservation.start);
         
-      }*/
+
+        if (validUser === true && valideDate === true) {
+          this.dialogform = true;
+          this.formdialog.title = "Editar Reserva";
+          this.formdialog.description = dataReservation.details;
+          this.formdialog.id = dataReservation.id_schedules;
+        }
+      } finally {
+        // Do nothing
+      }
     },
 
-    validUser(user_id)
-    {
-      if(user_id != this.user.id)
-      {
-        alert('Você não tem permissão para alterar esse agendamento !!!')
+    validUser(user_id) {
+      if (user_id != this.user.id) {
+        alert("Você não tem permissão para alterar esse agendamento !!!");
       } else {
         return true;
       }
     },
 
-    valideDate(date)
-    {
+    valideDate(date) {
       const dateNow = new Date();
       const dateSchedule = new Date(date);
 
-      if(dateNow > dateSchedule)
-      {
-        alert('Esta data já está expirada, favor agendar um novo período !!!')
+      if (dateNow > dateSchedule) {
+        alert("Esta data já está expirada, favor agendar um novo período !!!");
       } else {
         return true;
       }
     },
 
-
     formatDate(date) {
       if (!date) return null;
-
+      if(!this.valideDate(date)) return null;
+      
       const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
+      return `${day}/${month}/${year}`;
     },
     parseDate(date) {
       if (!date) return null;
+      if(!this.valideDate(date)) return null;
 
-      const [month, day, year] = date.split("/");
+      
+      const [day, month, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
+    
 
     async addSchedules() {
+      
+      this.formaddschedules.user_id = this.user.id;
+      this.formaddschedules.date = this.date;
+  
       try {
-        this.ActionAddSchedules(this.form);
+        this.ActionAddSchedules(this.formaddschedules);
+        
 
         alert("Agendamento cadastrado com sucesso");
       } catch (err) {
-        alert("erro ao cadastrar");
-        console.log(err);
+  
+        alert(err.date ? err.date  : 'Erro ao Cadastrar')
       }
     },
 
@@ -385,17 +501,19 @@ export default {
       nativeEvent.stopPropagation();
     },
 
-    updateCalendar() {
-      
+     async updateCalendar() {
       const events = [];
-      this.listSchedules.forEach((doc) => {
+    
+      await this.listSchedules.forEach((doc) => {
+
         events.push({
-          name: "Reservado",
+          name: "Reservado por " + doc.name,
           start: doc.date + " " + doc.time,
           details: doc.description,
           timed: doc.time,
           color: "success",
-          user_id: doc.users_id
+          user_id: doc.user_id,
+          id_schedules: doc.id,
         });
       });
 
@@ -407,3 +525,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.addEvent {
+  margin-right: 10px;
+}
+</style>

@@ -10,12 +10,12 @@
               <v-col cols="12" md="4" class="light-blue darken-1">
                 <v-card-text class="white--text mt-12">
                   <h5 class="text-center">
-                    To Keep connected with us please login
+                    Para se manter conectado conosco, faça o login
                   </h5>
                 </v-card-text>
                 <div class="text-center">
                   <v-btn rounded outlined dark :to="{ name: 'login' }"
-                    >SIGN IN</v-btn
+                    >Login</v-btn
                   >
                 </div>
               </v-col>
@@ -24,12 +24,12 @@
                   <h1
                     class="text-center display-2 light-blue--text text--accent-3"
                   >
-                    Create Account
+                    Cadastre-se
                   </h1>
                   <v-form @submit.prevent="register()">
                     <v-text-field
                       required
-                      label="Name"
+                      label="Nome"
                       name="Name"
                       type="text"
                       prepend-icon="person"
@@ -50,7 +50,7 @@
                     <v-text-field
                       required
                       id="password"
-                      label="Password"
+                      label="Senha"
                       name="Password"
                       prepend-icon="lock"
                       type="password"
@@ -63,7 +63,7 @@
                         rounded
                         color="light-blue darken-1"
                         dark
-                        >Create Account</v-btn
+                        >Cadastrar</v-btn
                       >
                     </div>
                   </v-form>
@@ -94,7 +94,7 @@ export default {
     async register() {
       try {
         await this.ActionAddUser(this.form);
-        alert('cadastrado com Sucesso')
+        alert('cadastrado com Sucesso!')
       } catch (err) {
         alert(err.data.email ? err.data.email : 'Não foi possível fazer login')
       }

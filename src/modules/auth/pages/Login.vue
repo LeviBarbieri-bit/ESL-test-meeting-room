@@ -8,7 +8,7 @@
               <v-row>
                 <v-col cols=12 md="8">
                   <v-card-text class="mt-12">
-                    <h1 class="text-center display-2 light-blue--text text--accent-3">Sign in</h1>
+                    <h1 class="text-center display-2 light-blue--text text--accent-3">Login</h1>
                     
                     <v-form class="login" @submit.prevent="login()">
                       <v-text-field 
@@ -30,7 +30,7 @@
                       color="light-blue darken-1"
                       v-model="form.password" />
                       <div class="tex-center mt-3">
-                        <v-btn type="submit" rounded color="light-blue darken-1" dark>SIGN IN</v-btn>
+                        <v-btn type="submit" rounded color="light-blue darken-1" dark>Login</v-btn>
                       </div>
                     </v-form>
                   </v-card-text>
@@ -38,14 +38,14 @@
                 <v-col cols="12" md="4" class="light-blue darken-1">
                   <v-card-text class="white--text mt-12">
                     <h1 class="text-center display-1">
-                      Welcome, Friends!
+                      Bem vindo, Amigo!
                     </h1>
                     <h5 class="text-center">
-                      Register to reserve a room
+                      Registre-se para reservar uma sala
                     </h5>
                   </v-card-text>
                   <div class="text-center">
-                    <v-btn :to="{ name: 'register' }" rounded outlined dark>SIGN UP</v-btn> 
+                    <v-btn :to="{ name: 'register' }" rounded outlined dark>Registre-se</v-btn> 
                   </div>
                 </v-col>
               </v-row>
@@ -79,7 +79,7 @@
           await this.ActionDoLogin(this.form)
           this.$router.push({ name: 'schedules' })
         } catch (err) {
-          alert('Email or Password invalid')
+          alert('Erro ao fazer login')
         }
        
       },
