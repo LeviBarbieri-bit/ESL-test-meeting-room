@@ -1,40 +1,9 @@
 
 <template>
   <div id="home">
-    <v-card color="grey lighten-5" flat tile>
-      <v-toolbar dense>
-        <v-toolbar-title>Reserva de Sala</v-toolbar-title>
-
-        <v-spacer></v-spacer>
-
-        <v-menu bottom min-width="200px" rounded offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn icon x-large v-on="on" size="30">
-              <v-avatar>
-                <v-icon> mdi-account-circle </v-icon>
-              </v-avatar>
-            </v-btn>
-          </template>
-          <v-card>
-            <v-list-item-content class="justify-center">
-              <div class="mx-auto text-center">
-                <v-avatar>
-                  <v-icon size="50"> mdi-account-circle </v-icon>
-                </v-avatar>
-                <h3>{{ user.name }}</h3>
-                <p class="caption mt-1">
-                  {{ user.email }}
-                </p>
-
-                <v-divider class="my-3"></v-divider>
-                <v-btn depressed rounded text> Sair </v-btn>
-              </div>
-            </v-list-item-content>
-          </v-card>
-        </v-menu>
-      </v-toolbar>
-    </v-card>
-
+    <div>
+      <LayoutNavbar />
+    </div>
     <v-container class="fill-height" fluid>
       <v-row align="center" justify="center">
         <v-col cols="10" sm="10" md="10">
@@ -185,7 +154,6 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" lg="4">
-                    
                     <v-menu
                       ref="menu1"
                       v-model="menu1"
@@ -213,7 +181,6 @@
                         @input="menu1 = false"
                       ></v-date-picker>
                     </v-menu>
-
                   </v-col>
                 </v-row>
                 <v-row>
@@ -245,9 +212,7 @@
                         full-width
                         @click:minute="$refs.menu.save(formaddschedules.time)"
                       ></v-time-picker>
-                      
                     </v-menu>
-                    
                   </v-col>
                 </v-row>
                 <v-row>
@@ -272,17 +237,27 @@
               >
                 Fechar
               </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="addSchedules()"
-              >
+              <v-btn color="blue darken-1" text @click="addSchedules()">
                 Salvar
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-row>
+      <div class="text-center">
+        <v-dialog v-model="loadingdialog" hide-overlay persistent width="300">
+          <v-card color="primary" dark>
+            <v-card-text>
+              Por favor aguarde
+              <v-progress-linear
+                indeterminate
+                color="white"
+                class="mb-0"
+              ></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+      </div>
     </v-container>
   </div>
 </template>
@@ -290,9 +265,12 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-
+import LayoutNavbar from "@/components/schedules/LayoutNavBar";
 export default {
   name: "schedules",
+  components: {
+    LayoutNavbar,
+  },
   computed: {
     ...mapState("auth", ["user"]),
     ...mapState("schedules", ["listSchedules"]),
@@ -307,6 +285,7 @@ export default {
   },
 
   data: (vm) => ({
+    loadingdialog: false,
     time: null,
     menu3: false,
     modal2: false,
@@ -316,7 +295,7 @@ export default {
     menu2: false,
     focus: "",
     type: "month",
-    weekday: [ 1, 2, 3, 4, 5],
+    weekday: [1, 2, 3, 4, 5],
     typeToLabel: {
       month: "Mês",
       week: "Semana",
@@ -342,15 +321,12 @@ export default {
       date: "",
       description: "",
       user_id: "",
-      
-
-    }
+    },
   }),
   mounted() {
     this.$refs.calendar.checkChange();
     this.ActionShowSchedules();
     this.updateCalendar();
-
   },
 
   created() {
@@ -366,44 +342,50 @@ export default {
     ]),
 
     async ScheduleFormEdit() {
-      
+       this.loadingdialog = true;
       try {
-        console.log(this.formdialog)
         await this.ActionEditSchedule(this.formdialog);
         this.ActionShowSchedules();
         alert("Agendamento Alterado com Sucesso!");
         this.updateCalendar();
         this.dialogform = false;
+        this.loadingdialog = false;
       } catch (err) {
-        
         alert("Erro ao alterar Agendamento");
+        this.loadingdialog = false;
       }
     },
 
     async deleteReservation(dataReservation) {
+      this.loadingdialog = true;
       try {
         var validUser = this.validUser(dataReservation.user_id);
-        var confirmSchedule = confirm("Tem certeza que quer excluir o agendamento ?")
+        if (validUser === true) {
+          var confirmSchedule = confirm(
+            "Tem certeza que quer excluir o agendamento ?"
+          );
 
-        if (validUser === true && confirmSchedule === true) {
-          await this.ActionDeleteSchedule(dataReservation.id_schedules);
+          if (confirmSchedule === true) {
+            await this.ActionDeleteSchedule(dataReservation.id_schedules);
 
-          this.ActionShowSchedules();
-        
-          alert("Deletado com Sucesso!");
-          this.updateCalendar();
+            this.ActionShowSchedules();
+            alert("Deletado com Sucesso!");
+            this.updateCalendar();
+            this.loadingdialog = false;
+          }
+        } else {
+           this.loadingdialog = false;
         }
       } catch (error) {
+         this.loadingdialog = false;
         alert("Erro ao deletar");
       }
     },
 
     editReservation(dataReservation) {
-      
       try {
         var validUser = this.validUser(dataReservation.user_id);
         var valideDate = this.valideDate(dataReservation.start);
-        
 
         if (validUser === true && valideDate === true) {
           this.dialogform = true;
@@ -437,37 +419,34 @@ export default {
 
     formatDate(date) {
       if (!date) return null;
-      if(!this.valideDate(date)) return null;
-      
+      if (!this.valideDate(date)) return null;
+
       const [year, month, day] = date.split("-");
       return `${day}/${month}/${year}`;
     },
     parseDate(date) {
       if (!date) return null;
-      if(!this.valideDate(date)) return null;
+      if (!this.valideDate(date)) return null;
 
-      
       const [day, month, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
-    
 
     async addSchedules() {
-      
       this.formaddschedules.user_id = this.user.id;
       this.formaddschedules.date = this.date;
-  
+      this.loadingdialog = true;
       try {
-        this.ActionAddSchedules(this.formaddschedules);
-         this.ActionShowSchedules();
-        
+        await this.ActionAddSchedules(this.formaddschedules);
+        this.ActionShowSchedules();
+
         alert("Cadastrado com Sucesso");
         this.updateCalendar();
-      
-        
+        this.modalAddSchedules = false;
+        this.loadingdialog = false;
       } catch (error) {
-  
-        alert(error.date ? error.date  : 'Erro ao Cadastrar')
+        this.loadingdialog = false;
+        alert(error.date ? error.date : "Erro ao Cadastrar");
       }
     },
 
@@ -506,12 +485,10 @@ export default {
       nativeEvent.stopPropagation();
     },
 
-     async updateCalendar() {
-  
+    async updateCalendar() {
       const events = [];
-    
-      await this.listSchedules.forEach((doc) => {
 
+      await this.listSchedules.forEach((doc) => {
         events.push({
           name: "Reservado por " + doc.name,
           start: doc.date + " " + doc.time,
@@ -524,14 +501,12 @@ export default {
       });
 
       this.events = events;
-  
     },
-    
   },
 };
 </script>
 <style scoped>
-.addEvent {
-  margin-right: 10px;
-}
+  .addEvent {
+    margin-right: 10px;
+  }
 </style>
