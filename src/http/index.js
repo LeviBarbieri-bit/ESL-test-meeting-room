@@ -7,14 +7,14 @@ Vue.use(VueResource)
 
 const http = Vue.http
 
-http.options.root = 'http://127.0.0.1:3000/'
+http.options.root = 'https://api-meeting-room.herokuapp.com/'
 
 http.interceptors.push(interceptors)
 
 Object.keys(services).map(service => {
   services[service] = Vue.resource('', {}, services[service])
 })
-
+s
 const setBearerToken = token => {
   http.headers.common['Authorization'] = `Bearer ${token}`
 }
