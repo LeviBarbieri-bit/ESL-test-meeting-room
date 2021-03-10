@@ -14,7 +14,7 @@ http.interceptors.push(interceptors)
 Object.keys(services).map(service => {
   services[service] = Vue.resource('', {}, services[service])
 })
-s
+
 const setBearerToken = token => {
   http.headers.common['Authorization'] = `Bearer ${token}`
 }
