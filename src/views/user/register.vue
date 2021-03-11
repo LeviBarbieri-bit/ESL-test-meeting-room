@@ -72,6 +72,20 @@
             </v-row>
           </v-col>
         </v-row>
+        <div class="text-center">
+          <v-dialog v-model="loadingdialog" hide-overlay persistent width="300">
+            <v-card color="primary" dark>
+              <v-card-text>
+                Por favor aguarde
+                <v-progress-linear
+                  indeterminate
+                  color="white"
+                  class="mb-0"
+                ></v-progress-linear>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </div>
       </v-container>
     </v-main>
   </v-app>
@@ -81,6 +95,7 @@ import { mapActions } from "vuex";
 
 export default {
   data: () => ({
+    loadingdialog: false ,
     form: {
       email: "root@gmail.com",
       password: "root",
@@ -92,11 +107,14 @@ export default {
     ...mapActions("user", ["ActionAddUser"]),
 
     async register() {
+      this.loadingdialog = true;
       try {
         await this.ActionAddUser(this.form);
-        alert('cadastrado com Sucesso!')
+        this.loadingdialog = false;
+        alert("Usuário cadastrado com Sucesso!");
       } catch (err) {
-        alert(err.data.email ? err.data.email : 'Não foi possível fazer login')
+        this.loadingdialog = false;
+        alert(err.data.email ? err.data.email : "Erro ao cadastrar Usúario");
       }
     },
   },

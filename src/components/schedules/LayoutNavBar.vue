@@ -27,7 +27,7 @@
                 </p>
 
                 <v-divider class="my-3"></v-divider>
-                <v-btn :to="{ name: 'login' }" depressed rounded text> Sair </v-btn>
+                <v-btn  @click="close()" depressed rounded text> Sair </v-btn>
               </div>
             </v-list-item-content>
           </v-card>
@@ -37,11 +37,30 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
     computed: {
         ...mapState("auth", ["user"]),    
-    }
+    },
+    methods: {
+      ...mapActions("auth", ["ActionSignOut"]),
+
+
+      async close() {
+
+        try {
+
+          await this.ActionSignOut();
+          this.$router.push({ name: "login" });
+           
+        } catch (error) {
+          alert('Erro ao sair')
+        }
+      
+      }
+    },
+
+    
 }
 </script>

@@ -340,9 +340,11 @@ export default {
       "ActionEditSchedule",
       "ActionDeleteSchedule",
     ]),
-
+     
     async ScheduleFormEdit() {
-       this.loadingdialog = true;
+
+      this.loadingdialog = true;
+      
       try {
         await this.ActionEditSchedule(this.formdialog);
         this.ActionShowSchedules();
@@ -486,9 +488,8 @@ export default {
     },
 
     async updateCalendar() {
-      const events = [];
-
-      await this.listSchedules.forEach((doc) => {
+      const events = [];  
+        await this.listSchedules.forEach((doc) => {
         events.push({
           name: "Reservado por " + doc.name,
           start: doc.date + " " + doc.time,
@@ -498,8 +499,8 @@ export default {
           user_id: doc.user_id,
           id_schedules: doc.id,
         });
+  
       });
-
       this.events = events;
     },
   },
