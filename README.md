@@ -1,30 +1,29 @@
 # Reserva de Sala
-<img height="250px" src="public/readme/login_print.png"><img height="250px" src="public/readme/register.png"><img  src="public/readme/calendario.png"><img height="250px"  src="public/readme/descrição da reserva.png"><img  height="250px" src="public/readme/adicionar_reserva.png">
+Esse Projeto foi desenvolvido como teste de contratação para empresa ESL buscando mostrar habilidade tecninicas e um pouco do meu conhecimento
+
+# Stacks
+ 
+ <img src="public/favicon.ico">
 
 
 
+# Preview
+<img  src="public/readme/login_print.png" height="250px" /> <img  src="public/readme/register.png" height="250px"/> <img  src="public/readme/calendario.png"> <img  height="250px" src="public/readme/adicionar_reserva.png"> <img height="250px"  src="public/readme/descrição da reserva.png"> 
 
 
 
-## Project setup
+## Configuração do projeto
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compila e recarrega a quente para desenvolvimento
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compila e minimiza para produção
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
