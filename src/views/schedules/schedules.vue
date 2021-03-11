@@ -275,6 +275,7 @@ export default {
     ...mapState("auth", ["user"]),
     ...mapState("schedules", ["listSchedules"]),
     computedDateFormatted() {
+      
       return this.formatDate(this.date);
     },
   },
@@ -408,14 +409,35 @@ export default {
       }
     },
 
-    valideDate(date) {
-      const dateNow = new Date();
-      const dateSchedule = new Date(date);
+     addDays (date){
 
-      if (dateNow > dateSchedule) {
-        return false;
-      } else {
+      var dt = new Date(date);
+      dt.setDate(dt.getDate() + 1);
+      return this.alterDate(dt);
+
+    },
+
+    alterDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [year, month, day].join('-');
+    },
+
+
+    valideDate(date) {
+      
+  
+      if (this.alterDate(new Date()) <= this.addDays(date) ) {
         return true;
+        
+      } else {
+        return false;
       }
     },
 
@@ -427,6 +449,7 @@ export default {
       return `${day}/${month}/${year}`;
     },
     parseDate(date) {
+      
       if (!date) return null;
       if (!this.valideDate(date)) return null;
 
