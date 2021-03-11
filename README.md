@@ -1,5 +1,5 @@
 # Reserva de Sala
-Esse Projeto foi desenvolvido como teste de contratação para empresa ESL buscando mostrar habilidade tecninicas e um pouco do meu conhecimento
+Esse Projeto foi desenvolvido como teste de contratação para empresa ESL buscando mostrar habilidade tecnicas e um pouco do meu conhecimento em minha carreira como desenvolvedor e estudante.
 
 # Stacks
  
