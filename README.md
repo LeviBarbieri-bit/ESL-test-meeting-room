@@ -1,5 +1,5 @@
 # Reserva de Sala
-<img style="height: 300px !important;" src="public/readme/login_print.png"><img style="height: 300px !important;" src="public/readme/register.png"><img style="height: 300px !important;" src="public/readme/calendario.png"><img style="height: 300px !important;" src="public/readme/descrição da reserva.png"><img style="height: 300px !important;" src="public/readme/adicionar_reserva.png">
+<img height="250px" src="public/readme/login_print.png"><img height="250px" src="public/readme/register.png"><img  src="public/readme/calendario.png"><img height="250px"  src="public/readme/descrição da reserva.png"><img  height="250px" src="public/readme/adicionar_reserva.png">
 
 
 
