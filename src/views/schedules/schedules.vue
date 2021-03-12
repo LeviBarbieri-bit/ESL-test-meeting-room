@@ -316,6 +316,7 @@ export default {
       title: "Reserva",
       description: "",
       id: "",
+      user_id: "",
     },
     formaddschedules: {
       time: "",
@@ -345,7 +346,7 @@ export default {
     async ScheduleFormEdit() {
 
       this.loadingdialog = true;
-      
+      this.formdialog.user_id = this.user.id
       try {
         await this.ActionEditSchedule(this.formdialog);
         this.ActionShowSchedules();
@@ -431,8 +432,7 @@ export default {
 
 
     valideDate(date) {
-      
-  
+    
       if (this.alterDate(new Date()) <= this.addDays(date) ) {
         return true;
         
@@ -459,8 +459,10 @@ export default {
 
     async addSchedules() {
       this.formaddschedules.user_id = this.user.id;
-      this.formaddschedules.date = this.date;
+      this.formaddschedules.schedule = new Date(this.date + ' ' + this.formaddschedules.time);
+     
       this.loadingdialog = true;
+
       try {
         await this.ActionAddSchedules(this.formaddschedules);
         this.ActionShowSchedules();
@@ -513,12 +515,13 @@ export default {
     async updateCalendar() {
       const events = [];  
         await this.listSchedules.forEach((doc) => {
+
         events.push({
           name: "Reservado por " + doc.name,
-          start: doc.date + " " + doc.time,
+          start: new Date(doc.schedule),
           details: doc.description,
-          timed: doc.time,
           color: "success",
+          timed: new Date(doc.schedule).getTime(),
           user_id: doc.user_id,
           id_schedules: doc.id,
         });
