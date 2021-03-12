@@ -355,8 +355,9 @@ export default {
         this.dialogform = false;
         this.loadingdialog = false;
       } catch (err) {
-        alert("Erro ao alterar Agendamento");
+        alert(err.body.schedule ? err.body.schedule : "Erro ao Alterar Agendamento");
         this.loadingdialog = false;
+        this.dialogform = false;
       }
     },
 
@@ -473,7 +474,7 @@ export default {
         this.loadingdialog = false;
       } catch (error) {
         this.loadingdialog = false;
-        alert(error.date ? error.date : "Erro ao Cadastrar");
+        alert(error.body.schedule ? error.body.schedule : "Erro ao Cadastrar");
       }
     },
 
